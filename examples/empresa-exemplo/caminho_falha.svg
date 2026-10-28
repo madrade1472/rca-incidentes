@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" class="cf" id="cf-arquivo" viewBox="0 0 760 556" width="760" height="556" role="img" aria-labelledby="cf-arquivo-t"><title id="cf-arquivo-t">Caminho da falha, INC-2026-014</title><style>svg.cf{--cf-fundo:#ffffff;--cf-caixa:#f5f6f3;--cf-borda:#c9cfca;--cf-texto:#1c2321;--cf-suave:#5b6662;
+--cf-seta:#7d8883;--cf-acento:#1f6f68;--cf-alerta:#b42318;--cf-alerta-fundo:#fcebe9;--cf-tag-texto:#ffffff;
+font-family:Inter,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+@media (prefers-color-scheme:dark){svg.cf{--cf-fundo:#1b201f;--cf-caixa:#232a28;--cf-borda:#3b4542;
+--cf-texto:#e6eae8;--cf-suave:#a4afab;--cf-seta:#8b9793;--cf-acento:#62b5aa;--cf-alerta:#f27a6f;
+--cf-alerta-fundo:#3b2422;--cf-tag-texto:#1b201f}}
+@media print{svg.cf{--cf-fundo:#ffffff;--cf-caixa:#f5f6f3;--cf-borda:#c9cfca;--cf-texto:#1c2321;
+--cf-suave:#5b6662;--cf-seta:#7d8883;--cf-acento:#1f6f68;--cf-alerta:#b42318;--cf-alerta-fundo:#fcebe9;
+--cf-tag-texto:#ffffff}}
+svg.cf .fundo{fill:var(--cf-fundo)}
+svg.cf .caixa{fill:var(--cf-caixa);stroke:var(--cf-borda);stroke-width:1}
+svg.cf .caixa.alerta{fill:var(--cf-alerta-fundo);stroke:var(--cf-alerta);stroke-width:2}
+svg.cf .barra{fill:var(--cf-acento)}
+svg.cf .barra.alerta{fill:var(--cf-alerta)}
+svg.cf .titulo{fill:var(--cf-texto);font-weight:650;font-size:15px}
+svg.cf .cabeca{fill:var(--cf-texto);font-weight:650;font-size:16px}
+svg.cf .sub{fill:var(--cf-suave);font-size:13px}
+svg.cf .nota{fill:var(--cf-suave);font-size:12px;font-style:italic}
+svg.cf .nota.alerta{fill:var(--cf-alerta);font-style:normal;font-weight:600}
+svg.cf .guia{stroke:var(--cf-borda);stroke-width:1;stroke-dasharray:3 3}
+svg.cf .guia.alerta{stroke:var(--cf-alerta)}
+svg.cf .linha{stroke:var(--cf-seta);stroke-width:2;fill:none}
+svg.cf .linha.alerta{stroke:var(--cf-alerta);stroke-width:2.5}
+svg.cf .ponta{fill:var(--cf-seta)}
+svg.cf .ponta.alerta{fill:var(--cf-alerta)}
+svg.cf .rotulo{fill:var(--cf-suave);font-size:12.5px}
+svg.cf .rotulo.alerta{fill:var(--cf-alerta);font-weight:600}
+svg.cf .tag{fill:var(--cf-alerta)}
+svg.cf .tag-texto{fill:var(--cf-tag-texto);font-size:11px;font-weight:700;letter-spacing:.04em}
+svg.cf .legenda{fill:var(--cf-suave);font-size:12px}</style><rect class="fundo" x="0" y="0" width="760" height="556" rx="12"/><text class="cabeca" x="24" y="40">Caminho da falha, INC-2026-014</text><rect class="caixa" x="24" y="64" width="480" height="66" rx="8"/><rect class="barra" x="24" y="64" width="5" height="66" rx="2"/><text class="titulo" x="46" y="92">CRM em SaaS</text><text class="sub" x="46" y="114">Nova versão passa a enviar o campo desconto como texto</text><line class="guia" x1="508" y1="97.0" x2="526" y2="97.0"/><text class="nota" x="532" y="93.0">19/10 17:30, nota de versão do</text><text class="nota" x="532" y="109.0">fornecedor</text><line class="linha" x1="264.0" y1="130" x2="264.0" y2="179"/><path class="ponta" d="M258.0 178 L270.0 178 L264.0 188 Z"/><text class="rotulo" x="280.0" y="163.5">Integração, carga diária</text><rect class="caixa" x="24" y="188" width="480" height="66" rx="8"/><rect class="barra" x="24" y="188" width="5" height="66" rx="2"/><text class="titulo" x="46" y="216">Camada bronze</text><text class="sub" x="46" y="238">Recebe a carga normalmente, sem validar o esquema</text><line class="linha alerta" x1="264.0" y1="254" x2="264.0" y2="303"/><path class="ponta alerta" d="M258.0 302 L270.0 302 L264.0 312 Z"/><rect class="tag" x="280.0" y="273.0" width="58.9" height="20" rx="10"/><text class="tag-texto" x="309.5" y="287.0" text-anchor="middle">FALHA</text><text class="rotulo alerta" x="346.9" y="287.5">job prata-vendas</text><rect class="caixa alerta" x="24" y="312" width="480" height="66" rx="8"/><rect class="barra alerta" x="24" y="312" width="5" height="66" rx="2"/><text class="titulo" x="46" y="340">Job de transformação (AWS Glue)</text><text class="sub" x="46" y="362">Erro de conversão de tipo, três noites seguidas</text><rect class="tag" x="366.2" y="302.0" width="125.8" height="20" rx="10"/><text class="tag-texto" x="429.1" y="316.0" text-anchor="middle">PONTO DE FALHA</text><line class="guia alerta" x1="508" y1="345.0" x2="526" y2="345.0"/><text class="nota alerta" x="532" y="349.0">Sem alarme para estado FAILED</text><line class="linha" x1="264.0" y1="378" x2="264.0" y2="427"/><path class="ponta" d="M258.0 426 L270.0 426 L264.0 436 Z"/><text class="rotulo" x="280.0" y="411.5">nada é promovido para a prata e a ouro</text><rect class="caixa" x="24" y="436" width="480" height="66" rx="8"/><rect class="barra" x="24" y="436" width="5" height="66" rx="2"/><text class="titulo" x="46" y="464">Painel comercial</text><text class="sub" x="46" y="486">Mostra os números de 19/10 até 22/10 13:20</text><line class="guia" x1="508" y1="469.0" x2="526" y2="469.0"/><text class="nota" x="532" y="473.0">Detectado por usuário em 22/10 08:45</text><rect class="tag" x="24" y="518" width="12" height="12" rx="3"/><text class="legenda" x="44" y="528">Em vermelho, o ponto em que a falha aconteceu</text></svg>

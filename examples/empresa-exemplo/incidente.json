@@ -1,0 +1,90 @@
+{
+  "id": "INC-2026-014",
+  "titulo": "Painel comercial sem dados novos por dois dias",
+  "ambiente": "Plataforma de dados, produção, sa-east-1",
+  "severidade": "SEV2",
+  "autor": "Equipe de Operação de Dados",
+  "versao": "1.0",
+  "data_documento": "23/10/2026",
+  "classificacao": "CONFIDENCIAL",
+  "resumo": "Entre a madrugada de 20 e a manhã de 22 de outubro, o painel comercial da Empresa Exemplo (empresa fictícia) mostrou os números de 19 de outubro. O CRM passou a enviar o campo de desconto como texto, o job do AWS Glue que promove a camada prata rejeitou a carga, e nenhum alarme avisava sobre job com falha. A área comercial percebeu o problema antes da operação.",
+  "marcos": {
+    "inicio_impacto": "2026-10-20T03:10",
+    "deteccao": "2026-10-22T08:45",
+    "reconhecimento": "2026-10-22T09:05",
+    "mitigacao": "2026-10-22T11:40",
+    "resolucao": "2026-10-22T13:20"
+  },
+  "impacto": {
+    "descricao": "Os painéis de vendas e de metas ficaram dois dias desatualizados. Duas reuniões de fechamento usaram números do dia 19. Nenhum dado foi perdido: a camada bronze recebeu todas as cargas.",
+    "numeros": [
+      { "rotulo": "Painéis afetados", "valor": "4 de 11" },
+      { "rotulo": "Usuários do painel comercial", "valor": "cerca de 60" },
+      { "rotulo": "Cargas rejeitadas na prata", "valor": "3" },
+      { "rotulo": "Dado perdido", "valor": "nenhum" }
+    ]
+  },
+  "linha_do_tempo": [
+    { "quando": "2026-10-19T17:30", "fonte": "Nota de versão do CRM", "evento": "Fornecedor do CRM publica versão que muda o tipo do campo desconto para texto", "tipo": "mudanca" },
+    { "quando": "2026-10-20T03:10", "fonte": "Logs do AWS Glue", "evento": "Job prata-vendas falha com erro de conversão de tipo no campo desconto", "tipo": "log" },
+    { "quando": "2026-10-21T03:12", "fonte": "Logs do AWS Glue", "evento": "Segunda falha do job prata-vendas, com o mesmo erro", "tipo": "log" },
+    { "quando": "2026-10-22T03:11", "fonte": "Logs do AWS Glue", "evento": "Terceira falha do job prata-vendas", "tipo": "log" },
+    { "quando": "2026-10-22T08:45", "fonte": "Chamado no portal", "evento": "Gerente comercial abre chamado: o painel mostra as vendas do dia 19", "tipo": "deteccao" },
+    { "quando": "2026-10-22T09:05", "fonte": "Chamado no portal", "evento": "Plantão de dados assume o chamado", "tipo": "resposta" },
+    { "quando": "2026-10-22T10:20", "fonte": "Canal do incidente", "evento": "Causa identificada no log do job: campo desconto chegando como texto", "tipo": "resposta" },
+    { "quando": "2026-10-22T11:40", "fonte": "CloudTrail", "evento": "Nova versão do job prata-vendas publicada com conversão explícita do campo", "tipo": "mudanca" },
+    { "quando": "2026-10-22T13:20", "fonte": "Step Functions", "evento": "Reprocessamento dos dias 20 a 22 concluído; painéis atualizados", "tipo": "resposta" }
+  ],
+  "porques": [
+    "O painel comercial mostrou dados antigos porque a camada ouro não foi atualizada por dois dias.",
+    "A camada ouro não foi atualizada porque o job que promove a prata falhou três noites seguidas.",
+    "O job falhou porque o CRM passou a enviar o campo desconto como texto, e o job espera número.",
+    "A mudança chegou sem aviso porque não existe contrato de esquema entre o CRM e a plataforma, nem validação na entrada da bronze.",
+    "A falha durou dois dias porque não havia alarme para job do Glue com falha: só existia alarme de atraso na carga do ERP."
+  ],
+  "causa_raiz": "Não existe contrato de esquema entre o CRM e a plataforma de dados, então uma mudança de tipo no fornecedor quebra a promoção da prata sem aviso; e a falha de job não gerava alarme, então ela só apareceu quando um usuário reclamou.",
+  "fatores": [
+    "A carga do CRM é diária, então cada falha só se repete 24 horas depois",
+    "O runbook do plantão cobria atraso do ERP, mas não falha de job do Glue",
+    "O fornecedor do CRM publica notas de versão num portal que ninguém da operação acompanha"
+  ],
+  "funcionou": [
+    "A camada bronze preservou todas as cargas, o que permitiu reprocessar sem perda",
+    "O log do job apontou o campo e a linha, e a causa foi encontrada 75 minutos depois do reconhecimento",
+    "A orquestração do Step Functions reprocessou três dias numa única execução"
+  ],
+  "nao_funcionou": [
+    "Nenhum alarme disparou em três falhas seguidas",
+    "O usuário de negócio detectou o problema antes da operação"
+  ],
+  "acoes": [
+    { "titulo": "Criar alarme do CloudWatch para estado FAILED de qualquer job do Glue de produção, com aviso no canal do plantão", "tipo": "detectar", "prioridade": "P1", "dono": "Operação de dados", "prazo": "24/10/2026", "status": "concluida" },
+    { "titulo": "Validar esquema na entrada da bronze e mandar registro fora do contrato para quarentena, sem travar a carga", "tipo": "prevenir", "prioridade": "P1", "dono": "Engenharia de dados", "prazo": "07/11/2026" },
+    { "titulo": "Publicar contrato de esquema do CRM e combinar com o fornecedor aviso prévio de mudança de tipo", "tipo": "prevenir", "prioridade": "P2", "dono": "Arquitetura", "prazo": "21/11/2026" },
+    { "titulo": "Criar alarme de frescor: camada ouro sem atualização há mais de 26 horas", "tipo": "detectar", "prioridade": "P2", "dono": "Operação de dados", "prazo": "07/11/2026" },
+    { "titulo": "Incluir falha de job do Glue e reprocessamento pelo Step Functions no runbook do plantão", "tipo": "processo", "prioridade": "P3", "dono": "Operação de dados", "prazo": "14/11/2026" }
+  ],
+  "licoes": [
+    "Alarme de atraso de uma origem não protege as outras: o alarme certo é o de frescor do dado entregue",
+    "Guardar o dado bruto na bronze transformou um incidente de perda em um incidente de atraso"
+  ],
+  "caminho_falha": {
+    "passos": [
+      { "tipo": "no", "titulo": "CRM em SaaS", "sub": "Nova versão passa a enviar o campo desconto como texto", "nota": "19/10 17:30, nota de versão do fornecedor" },
+      { "tipo": "seta", "rotulo": "Integração, carga diária" },
+      { "tipo": "no", "titulo": "Camada bronze", "sub": "Recebe a carga normalmente, sem validar o esquema" },
+      { "tipo": "seta", "rotulo": "job prata-vendas", "alerta": "FALHA" },
+      { "tipo": "no", "titulo": "Job de transformação (AWS Glue)", "sub": "Erro de conversão de tipo, três noites seguidas", "nota": "Sem alarme para estado FAILED", "alerta": "ponto de falha" },
+      { "tipo": "seta", "rotulo": "nada é promovido para a prata e a ouro" },
+      { "tipo": "no", "titulo": "Painel comercial", "sub": "Mostra os números de 19/10 até 22/10 13:20", "nota": "Detectado por usuário em 22/10 08:45" }
+    ]
+  },
+  "evidencias": [
+    { "rotulo": "Log do job prata-vendas", "ref": "CloudWatch Logs /aws-glue/jobs/error, 20 a 22/10" },
+    { "rotulo": "Chamado de detecção", "ref": "Portal de chamados, aberto em 22/10 08:45" },
+    { "rotulo": "Publicação da correção", "ref": "CloudTrail UpdateJob, 22/10 11:40" }
+  ],
+  "lacunas": [
+    "Horário exato em que o fornecedor do CRM aplicou a versão no ambiente de produção dele [A CONFIRMAR]"
+  ]
+}

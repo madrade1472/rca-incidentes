@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Análise de causa raiz do incidente INC-2026-014 (SEV2), de 20/10/2026 03:10 a 22/10/2026 13:20, com linha do tempo, causa raiz e plano de ação.">
+<title>RCA INC-2026-014: Painel comercial sem dados novos por dois dias</title>
+<style>
+:root{
+  color-scheme:light dark;
+  --fundo:#f6f6f2;--superficie:#ffffff;--superficie-2:#f0f1ec;--texto:#1c2321;--suave:#5b6662;
+  --borda:#dcdfd8;--acento:#1f6f68;--acento-suave:#e5efec;
+  --critico:#b42318;--critico-suave:#fcebe9;--alto:#b54708;--alto-suave:#fdf1e3;
+  --medio:#8a6a00;--medio-suave:#f8f1d6;--baixo:#2f7a4c;--baixo-suave:#e6f3ea;
+  --neutro:#5b6662;--neutro-suave:#eceee9;
+  --raio:10px;--sombra:0 1px 2px rgba(20,30,28,.06),0 4px 16px rgba(20,30,28,.05);
+  --fonte:Inter,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --fundo:#141817;--superficie:#1b201f;--superficie-2:#222927;--texto:#e6eae8;--suave:#a4afab;
+  --borda:#323b38;--acento:#62b5aa;--acento-suave:#1f302d;
+  --critico:#f27a6f;--critico-suave:#3b2422;--alto:#f0a35e;--alto-suave:#3a2c1d;
+  --medio:#e3c35a;--medio-suave:#363019;--baixo:#79c79a;--baixo-suave:#1d3226;
+  --neutro:#a4afab;--neutro-suave:#2a3230;
+  --sombra:0 1px 2px rgba(0,0,0,.3);
+}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--fundo);color:var(--texto);font:16px/1.6 var(--fonte);
+  font-feature-settings:"tnum" 1}
+.pagina{max-width:980px;margin:0 auto;padding:40px 16px 64px}
+.capa{background:var(--superficie);border:1px solid var(--borda);border-radius:var(--raio);
+  box-shadow:var(--sombra);padding:32px 32px 28px;border-top:5px solid var(--acento)}
+.sobre{margin:0 0 6px;color:var(--acento);font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+h1{margin:0 0 20px;font-size:clamp(1.6rem,3.4vw,2.2rem);line-height:1.2;letter-spacing:-.01em}
+.ficha{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px 24px;margin:0}
+.ficha div{min-width:0}
+.ficha dt{color:var(--suave);font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.ficha dd{margin:2px 0 0;font-weight:500;overflow-wrap:anywhere}
+.chip{display:inline-block;padding:1px 10px;border-radius:999px;font-size:.78rem;font-weight:700;
+  letter-spacing:.04em;line-height:1.7;white-space:nowrap;background:var(--neutro-suave);color:var(--neutro)}
+.critico{background:var(--critico-suave);color:var(--critico)}
+.alto{background:var(--alto-suave);color:var(--alto)}
+.medio{background:var(--medio-suave);color:var(--medio)}
+.baixo{background:var(--baixo-suave);color:var(--baixo)}
+.neutro{background:var(--neutro-suave);color:var(--neutro)}
+section{margin-top:44px}
+h2{display:flex;align-items:baseline;gap:12px;margin:0 0 14px;font-size:1.35rem;line-height:1.3;
+  padding-bottom:8px;border-bottom:1px solid var(--borda)}
+h2 .num{color:var(--acento);font-size:.95rem;font-weight:700;font-variant-numeric:tabular-nums}
+h3{margin:26px 0 8px;font-size:1.05rem}
+p{margin:0 0 12px;text-align:justify;hyphens:auto}
+.nota-sec{color:var(--suave);font-size:.92rem}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:0 0 20px}
+.kpi{background:var(--superficie);border:1px solid var(--borda);border-radius:var(--raio);padding:14px 16px}
+.kpi span{display:block;color:var(--suave);font-size:.78rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.kpi strong{display:block;margin-top:4px;font-size:1.45rem;line-height:1.2;font-variant-numeric:tabular-nums}
+.kpi.sev{border-left:5px solid currentColor}
+.kpi.sev span{color:inherit;opacity:.85}
+.kpi.sev small{display:block;margin-top:4px;font-size:.8rem;line-height:1.35;color:var(--texto);opacity:.8}
+.destaque{margin:18px 0;padding:16px 20px;border-left:4px solid var(--acento);background:var(--acento-suave);
+  border-radius:0 var(--raio) var(--raio) 0}
+.destaque b{display:block;margin-bottom:4px;color:var(--acento);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase}
+.destaque p{margin:0}
+.tabela{overflow-x:auto;background:var(--superficie);border:1px solid var(--borda);border-radius:var(--raio);margin:0 0 16px}
+table{width:100%;border-collapse:collapse;font-size:.93rem}
+th,td{padding:10px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--borda)}
+th{background:var(--superficie-2);color:var(--suave);font-size:.75rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.quando,td.id,td.prazo{white-space:nowrap;font-variant-numeric:tabular-nums}
+td.id{font-family:var(--mono);font-size:.82rem;color:var(--suave)}
+td.fonte{color:var(--suave)}
+th.num,td.num{text-align:right;font-weight:600;white-space:nowrap}
+tr.marco td{background:var(--acento-suave);font-weight:600}
+tr.marco td.quando::before{content:"";display:inline-block;width:8px;height:8px;margin-right:8px;
+  border-radius:50%;background:var(--acento);vertical-align:1px}
+figure{margin:0 0 12px;background:var(--superficie);border:1px solid var(--borda);border-radius:var(--raio);padding:12px}
+figure svg{display:block;width:100%;height:auto;max-width:760px;margin:0 auto}
+figcaption{margin-top:8px;color:var(--suave);font-size:.85rem;text-align:center}
+ol.porques{list-style:none;counter-reset:pq;margin:0;padding:0}
+ol.porques li{counter-increment:pq;position:relative;margin:0 0 10px;padding:12px 16px 12px 64px;
+  background:var(--superficie);border:1px solid var(--borda);border-radius:var(--raio)}
+ol.porques li::before{content:counter(pq);position:absolute;left:16px;top:11px;width:30px;height:30px;
+  border-radius:50%;background:var(--acento-suave);color:var(--acento);font-weight:700;text-align:center;line-height:30px}
+ul.lista{margin:0 0 12px;padding-left:22px}
+ul.lista li{margin:0 0 6px}
+.colunas{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.cartao{background:var(--superficie);border:1px solid var(--borda);border-radius:var(--raio);padding:16px 18px}
+.cartao h3{margin-top:0}
+.cartao.ok{border-top:4px solid var(--baixo)}
+.cartao.nao{border-top:4px solid var(--critico)}
+footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--borda);color:var(--suave);font-size:.85rem}
+@media (max-width:640px){
+  .pagina{padding-top:20px}
+  .capa{padding:22px 18px}
+  h2{font-size:1.2rem}
+  p{text-align:left}
+  .tabela.resp{background:transparent;border:0;overflow:visible}
+  .resp table,.resp tbody,.resp tr,.resp td{display:block;width:100%}
+  .resp thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .resp tr{margin:0 0 10px;background:var(--superficie);border:1px solid var(--borda);border-radius:var(--raio);overflow:hidden}
+  .resp td{display:grid;grid-template-columns:6.5rem 1fr;gap:10px;border-bottom:1px solid var(--borda);white-space:normal}
+  .resp td::before{content:attr(data-rotulo);color:var(--suave);font-size:.72rem;font-weight:700;
+    letter-spacing:.05em;text-transform:uppercase;padding-top:2px}
+  .resp td.num{text-align:left}
+  .resp tr.marco td.quando::before{content:attr(data-rotulo);display:block;width:auto;height:auto;margin:0;
+    border-radius:0;background:none;vertical-align:baseline}
+}
+@media print{
+  :root{--fundo:#ffffff;--superficie:#ffffff;--superficie-2:#f0f1ec;--texto:#111111;--suave:#4a524f;
+    --borda:#cfd3cd;--acento:#1f6f68;--acento-suave:#eaf2f0;--critico:#b42318;--critico-suave:#fcebe9;
+    --alto:#b54708;--alto-suave:#fdf1e3;--medio:#7a5e00;--medio-suave:#f8f1d6;--baixo:#2f7a4c;
+    --baixo-suave:#e6f3ea;--neutro:#4a524f;--neutro-suave:#eceee9;--sombra:none}
+  @page{margin:16mm 14mm}
+  body{font-size:10.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pagina{max-width:none;padding:0}
+  .capa{border-top-width:4px}
+  section{margin-top:22pt}
+  h2{break-after:avoid}
+  h3{break-after:avoid}
+  .kpi,.destaque,figure,ol.porques li,.cartao,tr{break-inside:avoid}
+  .tabela{overflow:visible}
+  thead{display:table-header-group}
+}
+</style>
+</head>
+<body>
+<main class="pagina">
+<header class="capa">
+<p class="sobre">Análise de causa raiz</p>
+<h1>Painel comercial sem dados novos por dois dias</h1>
+<dl class="ficha"><div><dt>Incidente</dt><dd>INC-2026-014</dd></div><div><dt>Severidade</dt><dd><span class="chip alto">SEV2</span></dd></div><div><dt>Ambiente</dt><dd>Plataforma de dados, produção, sa-east-1</dd></div><div><dt>Período do impacto</dt><dd>20/10/2026 03:10 a 22/10/2026 13:20</dd></div><div><dt>Versão</dt><dd>1.0</dd></div><div><dt>Data do documento</dt><dd>23/10/2026</dd></div><div><dt>Autoria</dt><dd>Equipe de Operação de Dados</dd></div><div><dt>Classificação</dt><dd><span class="chip neutro">CONFIDENCIAL</span></dd></div></dl>
+</header>
+<section id="resumo"><h2><span class="num">01</span>Resumo executivo</h2><div class="kpis"><div class="kpi sev alto"><span>Severidade</span><strong>SEV2</strong><small>Degradação severa ou funcionalidade crítica fora do ar para parte dos usuários</small></div><div class="kpi"><span>Tempo até detectar</span><strong>2 d 5 h</strong></div><div class="kpi"><span>Tempo até reconhecer</span><strong>20 min</strong></div><div class="kpi"><span>Tempo até mitigar</span><strong>2 d 8 h</strong></div><div class="kpi"><span>Duração do impacto</span><strong>2 d 10 h</strong></div></div><p>Entre a madrugada de 20 e a manhã de 22 de outubro, o painel comercial da Empresa Exemplo (empresa fictícia) mostrou os números de 19 de outubro. O CRM passou a enviar o campo de desconto como texto, o job do AWS Glue que promove a camada prata rejeitou a carga, e nenhum alarme avisava sobre job com falha. A área comercial percebeu o problema antes da operação.</p><div class="destaque"><b>Causa raiz</b><p>Não existe contrato de esquema entre o CRM e a plataforma de dados, então uma mudança de tipo no fornecedor quebra a promoção da prata sem aviso; e a falha de job não gerava alarme, então ela só apareceu quando um usuário reclamou.</p></div></section>
+<section id="impacto"><h2><span class="num">02</span>Impacto</h2><p>Os painéis de vendas e de metas ficaram dois dias desatualizados. Duas reuniões de fechamento usaram números do dia 19. Nenhum dado foi perdido: a camada bronze recebeu todas as cargas.</p><div class="tabela resp"><table><thead><tr><th>Indicador</th><th class="num">Valor</th></tr></thead><tbody><tr><td data-rotulo="Indicador">Painéis afetados</td><td class="num" data-rotulo="Valor">4 de 11</td></tr><tr><td data-rotulo="Indicador">Usuários do painel comercial</td><td class="num" data-rotulo="Valor">cerca de 60</td></tr><tr><td data-rotulo="Indicador">Cargas rejeitadas na prata</td><td class="num" data-rotulo="Valor">3</td></tr><tr><td data-rotulo="Indicador">Dado perdido</td><td class="num" data-rotulo="Valor">nenhum</td></tr></tbody></table></div><p class="nota-sec">Severidade SEV2: degradação severa ou funcionalidade crítica fora do ar para parte dos usuários.</p></section>
+<section id="linha-do-tempo"><h2><span class="num">03</span>Linha do tempo</h2><p class="nota-sec">Horários de Brasília. Cada evento traz a fonte de onde foi tirado; os marcos do incidente aparecem em destaque.</p><div class="tabela resp"><table><thead><tr><th class="quando">Quando</th><th>Evento</th><th class="fonte">Fonte</th></tr></thead><tbody><tr><td class="quando" data-rotulo="Quando">19/10/2026 17:30</td><td data-rotulo="Evento">Fornecedor do CRM publica versão que muda o tipo do campo desconto para texto</td><td class="fonte" data-rotulo="Fonte">Nota de versão do CRM</td></tr><tr class="marco"><td class="quando" data-rotulo="Quando">20/10/2026 03:10</td><td data-rotulo="Evento">Início do impacto: job prata-vendas falha com erro de conversão de tipo no campo desconto</td><td class="fonte" data-rotulo="Fonte">Logs do AWS Glue</td></tr><tr><td class="quando" data-rotulo="Quando">21/10/2026 03:12</td><td data-rotulo="Evento">Segunda falha do job prata-vendas, com o mesmo erro</td><td class="fonte" data-rotulo="Fonte">Logs do AWS Glue</td></tr><tr><td class="quando" data-rotulo="Quando">22/10/2026 03:11</td><td data-rotulo="Evento">Terceira falha do job prata-vendas</td><td class="fonte" data-rotulo="Fonte">Logs do AWS Glue</td></tr><tr class="marco"><td class="quando" data-rotulo="Quando">22/10/2026 08:45</td><td data-rotulo="Evento">Detecção: gerente comercial abre chamado: o painel mostra as vendas do dia 19</td><td class="fonte" data-rotulo="Fonte">Chamado no portal</td></tr><tr class="marco"><td class="quando" data-rotulo="Quando">22/10/2026 09:05</td><td data-rotulo="Evento">Reconhecimento: plantão de dados assume o chamado</td><td class="fonte" data-rotulo="Fonte">Chamado no portal</td></tr><tr><td class="quando" data-rotulo="Quando">22/10/2026 10:20</td><td data-rotulo="Evento">Causa identificada no log do job: campo desconto chegando como texto</td><td class="fonte" data-rotulo="Fonte">Canal do incidente</td></tr><tr class="marco"><td class="quando" data-rotulo="Quando">22/10/2026 11:40</td><td data-rotulo="Evento">Mitigação: nova versão do job prata-vendas publicada com conversão explícita do campo</td><td class="fonte" data-rotulo="Fonte">CloudTrail</td></tr><tr class="marco"><td class="quando" data-rotulo="Quando">22/10/2026 13:20</td><td data-rotulo="Evento">Resolução: reprocessamento dos dias 20 a 22 concluído; painéis atualizados</td><td class="fonte" data-rotulo="Fonte">Step Functions</td></tr></tbody></table></div></section>
+<section id="caminho-da-falha"><h2><span class="num">04</span>Caminho da falha</h2><p>O caminho da falha, do gatilho ao impacto percebido. O trecho em vermelho marca onde o fluxo deixou de funcionar.</p><figure><svg xmlns="http://www.w3.org/2000/svg" class="cf" id="cf" viewBox="0 0 760 516" width="760" height="516" role="img" aria-labelledby="cf-t"><title id="cf-t">Caminho da falha</title><style>svg.cf{--cf-fundo:#ffffff;--cf-caixa:#f5f6f3;--cf-borda:#c9cfca;--cf-texto:#1c2321;--cf-suave:#5b6662;
+--cf-seta:#7d8883;--cf-acento:#1f6f68;--cf-alerta:#b42318;--cf-alerta-fundo:#fcebe9;--cf-tag-texto:#ffffff;
+font-family:Inter,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+@media (prefers-color-scheme:dark){svg.cf{--cf-fundo:#1b201f;--cf-caixa:#232a28;--cf-borda:#3b4542;
+--cf-texto:#e6eae8;--cf-suave:#a4afab;--cf-seta:#8b9793;--cf-acento:#62b5aa;--cf-alerta:#f27a6f;
+--cf-alerta-fundo:#3b2422;--cf-tag-texto:#1b201f}}
+@media print{svg.cf{--cf-fundo:#ffffff;--cf-caixa:#f5f6f3;--cf-borda:#c9cfca;--cf-texto:#1c2321;
+--cf-suave:#5b6662;--cf-seta:#7d8883;--cf-acento:#1f6f68;--cf-alerta:#b42318;--cf-alerta-fundo:#fcebe9;
+--cf-tag-texto:#ffffff}}
+svg.cf .fundo{fill:var(--cf-fundo)}
+svg.cf .caixa{fill:var(--cf-caixa);stroke:var(--cf-borda);stroke-width:1}
+svg.cf .caixa.alerta{fill:var(--cf-alerta-fundo);stroke:var(--cf-alerta);stroke-width:2}
+svg.cf .barra{fill:var(--cf-acento)}
+svg.cf .barra.alerta{fill:var(--cf-alerta)}
+svg.cf .titulo{fill:var(--cf-texto);font-weight:650;font-size:15px}
+svg.cf .cabeca{fill:var(--cf-texto);font-weight:650;font-size:16px}
+svg.cf .sub{fill:var(--cf-suave);font-size:13px}
+svg.cf .nota{fill:var(--cf-suave);font-size:12px;font-style:italic}
+svg.cf .nota.alerta{fill:var(--cf-alerta);font-style:normal;font-weight:600}
+svg.cf .guia{stroke:var(--cf-borda);stroke-width:1;stroke-dasharray:3 3}
+svg.cf .guia.alerta{stroke:var(--cf-alerta)}
+svg.cf .linha{stroke:var(--cf-seta);stroke-width:2;fill:none}
+svg.cf .linha.alerta{stroke:var(--cf-alerta);stroke-width:2.5}
+svg.cf .ponta{fill:var(--cf-seta)}
+svg.cf .ponta.alerta{fill:var(--cf-alerta)}
+svg.cf .rotulo{fill:var(--cf-suave);font-size:12.5px}
+svg.cf .rotulo.alerta{fill:var(--cf-alerta);font-weight:600}
+svg.cf .tag{fill:var(--cf-alerta)}
+svg.cf .tag-texto{fill:var(--cf-tag-texto);font-size:11px;font-weight:700;letter-spacing:.04em}
+svg.cf .legenda{fill:var(--cf-suave);font-size:12px}</style><rect class="fundo" x="0" y="0" width="760" height="516" rx="12"/><rect class="caixa" x="24" y="24" width="480" height="66" rx="8"/><rect class="barra" x="24" y="24" width="5" height="66" rx="2"/><text class="titulo" x="46" y="52">CRM em SaaS</text><text class="sub" x="46" y="74">Nova versão passa a enviar o campo desconto como texto</text><line class="guia" x1="508" y1="57.0" x2="526" y2="57.0"/><text class="nota" x="532" y="53.0">19/10 17:30, nota de versão do</text><text class="nota" x="532" y="69.0">fornecedor</text><line class="linha" x1="264.0" y1="90" x2="264.0" y2="139"/><path class="ponta" d="M258.0 138 L270.0 138 L264.0 148 Z"/><text class="rotulo" x="280.0" y="123.5">Integração, carga diária</text><rect class="caixa" x="24" y="148" width="480" height="66" rx="8"/><rect class="barra" x="24" y="148" width="5" height="66" rx="2"/><text class="titulo" x="46" y="176">Camada bronze</text><text class="sub" x="46" y="198">Recebe a carga normalmente, sem validar o esquema</text><line class="linha alerta" x1="264.0" y1="214" x2="264.0" y2="263"/><path class="ponta alerta" d="M258.0 262 L270.0 262 L264.0 272 Z"/><rect class="tag" x="280.0" y="233.0" width="58.9" height="20" rx="10"/><text class="tag-texto" x="309.5" y="247.0" text-anchor="middle">FALHA</text><text class="rotulo alerta" x="346.9" y="247.5">job prata-vendas</text><rect class="caixa alerta" x="24" y="272" width="480" height="66" rx="8"/><rect class="barra alerta" x="24" y="272" width="5" height="66" rx="2"/><text class="titulo" x="46" y="300">Job de transformação (AWS Glue)</text><text class="sub" x="46" y="322">Erro de conversão de tipo, três noites seguidas</text><rect class="tag" x="366.2" y="262.0" width="125.8" height="20" rx="10"/><text class="tag-texto" x="429.1" y="276.0" text-anchor="middle">PONTO DE FALHA</text><line class="guia alerta" x1="508" y1="305.0" x2="526" y2="305.0"/><text class="nota alerta" x="532" y="309.0">Sem alarme para estado FAILED</text><line class="linha" x1="264.0" y1="338" x2="264.0" y2="387"/><path class="ponta" d="M258.0 386 L270.0 386 L264.0 396 Z"/><text class="rotulo" x="280.0" y="371.5">nada é promovido para a prata e a ouro</text><rect class="caixa" x="24" y="396" width="480" height="66" rx="8"/><rect class="barra" x="24" y="396" width="5" height="66" rx="2"/><text class="titulo" x="46" y="424">Painel comercial</text><text class="sub" x="46" y="446">Mostra os números de 19/10 até 22/10 13:20</text><line class="guia" x1="508" y1="429.0" x2="526" y2="429.0"/><text class="nota" x="532" y="433.0">Detectado por usuário em 22/10 08:45</text><rect class="tag" x="24" y="478" width="12" height="12" rx="3"/><text class="legenda" x="44" y="488">Em vermelho, o ponto em que a falha aconteceu</text></svg><figcaption>Figura 1. Caminho da falha do INC-2026-014.</figcaption></figure></section>
+<section id="porques"><h2><span class="num">05</span>Os porquês</h2><p>Do sintoma percebido até a causa sistêmica, perguntando por que a cada passo.</p><ol class="porques"><li>O painel comercial mostrou dados antigos porque a camada ouro não foi atualizada por dois dias.</li><li>A camada ouro não foi atualizada porque o job que promove a prata falhou três noites seguidas.</li><li>O job falhou porque o CRM passou a enviar o campo desconto como texto, e o job espera número.</li><li>A mudança chegou sem aviso porque não existe contrato de esquema entre o CRM e a plataforma, nem validação na entrada da bronze.</li><li>A falha durou dois dias porque não havia alarme para job do Glue com falha: só existia alarme de atraso na carga do ERP.</li></ol></section>
+<section id="causa-raiz"><h2><span class="num">06</span>Causa raiz</h2><div class="destaque"><b>Causa raiz</b><p>Não existe contrato de esquema entre o CRM e a plataforma de dados, então uma mudança de tipo no fornecedor quebra a promoção da prata sem aviso; e a falha de job não gerava alarme, então ela só apareceu quando um usuário reclamou.</p></div></section>
+<section id="fatores"><h2><span class="num">07</span>Fatores contribuintes</h2><ul class="lista"><li>A carga do CRM é diária, então cada falha só se repete 24 horas depois</li><li>O runbook do plantão cobria atraso do ERP, mas não falha de job do Glue</li><li>O fornecedor do CRM publica notas de versão num portal que ninguém da operação acompanha</li></ul></section>
+<section id="resposta"><h2><span class="num">08</span>Resposta ao incidente</h2><div class="colunas"><div class="cartao ok"><h3>O que funcionou</h3><ul class="lista"><li>A camada bronze preservou todas as cargas, o que permitiu reprocessar sem perda</li><li>O log do job apontou o campo e a linha, e a causa foi encontrada 75 minutos depois do reconhecimento</li><li>A orquestração do Step Functions reprocessou três dias numa única execução</li></ul></div><div class="cartao nao"><h3>O que não funcionou</h3><ul class="lista"><li>Nenhum alarme disparou em três falhas seguidas</li><li>O usuário de negócio detectou o problema antes da operação</li></ul></div></div></section>
+<section id="plano-de-acao"><h2><span class="num">09</span>Plano de ação</h2><p>Ações ordenadas por prioridade e prazo. Cada uma tem dono e prazo e segue para o backlog (<code>backlog.json</code>).</p><div class="tabela resp"><table><thead><tr><th class="id">ID</th><th>Ação</th><th>Tipo</th><th>Prioridade</th><th>Dono</th><th class="prazo">Prazo</th><th>Status</th></tr></thead><tbody><tr><td class="id" data-rotulo="ID">INC-2026-014-A01</td><td data-rotulo="Ação">Criar alarme do CloudWatch para estado FAILED de qualquer job do Glue de produção, com aviso no canal do plantão</td><td data-rotulo="Tipo">Detectar</td><td data-rotulo="Prioridade"><span class="chip critico">P1</span></td><td data-rotulo="Dono">Operação de dados</td><td class="prazo" data-rotulo="Prazo">24/10/2026</td><td data-rotulo="Status"><span class="chip baixo">Concluída</span></td></tr><tr><td class="id" data-rotulo="ID">INC-2026-014-A02</td><td data-rotulo="Ação">Validar esquema na entrada da bronze e mandar registro fora do contrato para quarentena, sem travar a carga</td><td data-rotulo="Tipo">Prevenir</td><td data-rotulo="Prioridade"><span class="chip critico">P1</span></td><td data-rotulo="Dono">Engenharia de dados</td><td class="prazo" data-rotulo="Prazo">07/11/2026</td><td data-rotulo="Status"><span class="chip neutro">Aberta</span></td></tr><tr><td class="id" data-rotulo="ID">INC-2026-014-A03</td><td data-rotulo="Ação">Criar alarme de frescor: camada ouro sem atualização há mais de 26 horas</td><td data-rotulo="Tipo">Detectar</td><td data-rotulo="Prioridade"><span class="chip alto">P2</span></td><td data-rotulo="Dono">Operação de dados</td><td class="prazo" data-rotulo="Prazo">07/11/2026</td><td data-rotulo="Status"><span class="chip neutro">Aberta</span></td></tr><tr><td class="id" data-rotulo="ID">INC-2026-014-A04</td><td data-rotulo="Ação">Publicar contrato de esquema do CRM e combinar com o fornecedor aviso prévio de mudança de tipo</td><td data-rotulo="Tipo">Prevenir</td><td data-rotulo="Prioridade"><span class="chip alto">P2</span></td><td data-rotulo="Dono">Arquitetura</td><td class="prazo" data-rotulo="Prazo">21/11/2026</td><td data-rotulo="Status"><span class="chip neutro">Aberta</span></td></tr><tr><td class="id" data-rotulo="ID">INC-2026-014-A05</td><td data-rotulo="Ação">Incluir falha de job do Glue e reprocessamento pelo Step Functions no runbook do plantão</td><td data-rotulo="Tipo">Processo</td><td data-rotulo="Prioridade"><span class="chip medio">P3</span></td><td data-rotulo="Dono">Operação de dados</td><td class="prazo" data-rotulo="Prazo">14/11/2026</td><td data-rotulo="Status"><span class="chip neutro">Aberta</span></td></tr></tbody></table></div></section>
+<section id="licoes"><h2><span class="num">10</span>Lições aprendidas</h2><ul class="lista"><li>Alarme de atraso de uma origem não protege as outras: o alarme certo é o de frescor do dado entregue</li><li>Guardar o dado bruto na bronze transformou um incidente de perda em um incidente de atraso</li></ul></section>
+<section id="metodo"><h2><span class="num">11</span>Método e evidências</h2><p>Análise sem culpados: o objetivo é entender por que o sistema permitiu a falha, e não quem a cometeu. Cada evento da linha do tempo e cada número deste documento têm a fonte indicada. A coleta de evidência foi feita somente em leitura.</p><div class="tabela resp"><table><thead><tr><th>Evidência</th><th>Referência</th></tr></thead><tbody><tr><td data-rotulo="Evidência">Log do job prata-vendas</td><td data-rotulo="Referência">CloudWatch Logs /aws-glue/jobs/error, 20 a 22/10</td></tr><tr><td data-rotulo="Evidência">Chamado de detecção</td><td data-rotulo="Referência">Portal de chamados, aberto em 22/10 08:45</td></tr><tr><td data-rotulo="Evidência">Publicação da correção</td><td data-rotulo="Referência">CloudTrail UpdateJob, 22/10 11:40</td></tr></tbody></table></div></section>
+<section id="lacunas"><h2><span class="num">12</span>Lacunas</h2><p>O que não pôde ser confirmado por evidência e permanece em aberto.</p><ul class="lista"><li>Horário exato em que o fornecedor do CRM aplicou a versão no ambiente de produção dele [A CONFIRMAR]</li></ul></section>
+<footer>RCA INC-2026-014: Painel comercial sem dados novos por dois dias. Versão 1.0 de 23/10/2026. Documento sem culpados,
+com fonte para cada evento e cada número.</footer>
+</main>
+</body>
+</html>
